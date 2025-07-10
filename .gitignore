@@ -3,7 +3,9 @@
 **/obj/
 **/Debug/
 **/Release/
-
+**/publish/
+publish.zip
+# Arquivos de configuração do Visual Studio
 # Diretórios Node.js
 node_modules/
 dist/
