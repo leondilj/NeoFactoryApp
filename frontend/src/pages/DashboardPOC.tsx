@@ -1,28 +1,37 @@
-import KpiCard from "../components/KpiCard";
-import TopClientesChart from "../components/TopClientesChart";
-import CustoOperacaoChart from "../components/CustoOperacaoChart";
+import { useEffect, useState } from "react";
+import { buscarDespesas } from "@/services/api";
+import { Despesa } from "@/models/Despesa";
 
-export default function DashboardPOC() {
-  const receita = 13852.10;
-  const despesas = 4200.00;
-  const impostos = 1052.55;
-  const lucro = receita - despesas - impostos;
+export default function Dashboard() {
+  const [despesas, setDespesas] = useState<Despesa[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+
+  useEffect(() => {
+    buscarDespesas({})
+      .then(data => {
+        setDespesas(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setErro("Erro ao carregar dados");
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <p>Carregando...</p>;
+  if (erro) return <p>{erro}</p>;
 
   return (
-    <div className="p-4 md:p-6 bg-gray-100 min-h-screen space-y-6">
-      <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">Painel Financeiro</h1>
-
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <KpiCard title="Receita Total" value={receita} />
-        <KpiCard title="Despesas Totais" value={despesas} />
-        <KpiCard title="Impostos Pagos" value={impostos} />
-        <KpiCard title="Lucro Líquido" value={lucro} highlight />
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TopClientesChart />
-        <CustoOperacaoChart />
-      </section>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Despesas</h1>
+      <ul className="space-y-2">
+        {despesas.map((d) => (
+          <li key={d.id} className="border p-2 rounded shadow-sm">
+            {d.cliente} — {d.tipo} — R$ {d.valor} — {new Date(d.data).toLocaleDateString()}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
