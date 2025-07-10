@@ -1,5 +1,29 @@
+# Diretórios .NET
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+
+# Diretórios Node.js
 node_modules/
 dist/
-.env
+
+# Vite
+.vite/
+
+# VS Code
 .vscode/
+
+# Arquivos temporários
+*.log
+*.tmp
+*.tsbuildinfo
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Sistema operacional
 .DS_Store
+Thumbs.db

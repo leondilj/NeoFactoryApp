@@ -6,6 +6,7 @@
     "dev": "vite",
     "start": "node server.js",
     "build": "vite build",
+    "deploy": "npm run build && node ../tools/copy-to-backend.js",
     "preview": "vite preview"
   },
   "engines": {
