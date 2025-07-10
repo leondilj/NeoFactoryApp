@@ -1,0 +1,18 @@
+{
+  "css.validate": false,
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "html",
+    "javascript": "javascript",
+    "typescript": "typescript",
+    "typescriptreact": "typescriptreact"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "appService.zipIgnorePattern": [
+    "node_modules{,/**}",
+    ".vscode{,/**}"
+  ],
+  "appService.defaultWebAppToDeploy": "/subscriptions/bfe31eb8-15d2-4789-b901-6914f25192d1/resourceGroups/NeoFactorySite/providers/Microsoft.Web/sites/NeoFactoryApp",
+  "appService.deploySubpath": "."
+}
