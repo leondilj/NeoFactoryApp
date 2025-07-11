@@ -1,31 +1,31 @@
-import { useState, useEffect, useRef } from "react";
-import ClienteResumo from "./ClienteResumo";
-import ResumoFinanceiroGrafico from "./ResumoFinanceiroGrafico";
-import DonutChart from "./DonutChart";
-import GastosPorCategoriaChart from "./GastosPorCategoriaChart";
-import CustoOperacaoChart from "./CustoOperacaoChart";
+import { useEffect, useRef, useState } from "react";
+import ClienteResumo from "@/components/dashboard/ClienteResumo";
+import ResumoFinanceiroGrafico from "@/components/dashboard/ResumoFinanceiroGrafico";
+import DonutChart from "@/components/dashboard/DonutChart";
+import GastosPorCategoriaChart from "@/components/dashboard/GastosPorCategoriaChart";
+import CustoOperacaoChart from "@/components/dashboard/CustoOperacaoChart";
 import { Calendar, ChevronDown } from "lucide-react";
+import { useFinanceiroStore } from "@/store/useFinanceiroStore";
 
 // Função auxiliar para exibir nome legível do período
 function nomePeriodo(periodo: string): string {
   switch (periodo) {
-    case "atual":
-      return "Mês Atual";
-    case "anterior":
-      return "Último Mês";
-    case "ultimos3":
-      return "Últimos 3 Meses";
-    default:
-      return "Período Desconhecido";
+    case "atual": return "Mês Atual";
+    case "anterior": return "Último Mês";
+    case "ultimos3": return "Últimos 3 Meses";
+    default: return "Período Desconhecido";
   }
 }
 
-export default function DashboardPage() {
-  const [clienteSelecionado, setClienteSelecionado] = useState<string>("Localiza");
-  const [periodoSelecionado, setPeriodoSelecionado] = useState<string>("atual");
+export default function DashboardFinanceiro() {
+  const { filtros, atualizarCampo, carregarResumo } = useFinanceiroStore();
   const [dropdownAberto, setDropdownAberto] = useState(false);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // 🔄 Carrega os dados do backend sempre que os filtros mudarem
+  useEffect(() => {
+    carregarResumo(filtros);
+  }, [filtros]);
 
   // Fecha o dropdown ao clicar fora
   useEffect(() => {
@@ -46,10 +46,10 @@ export default function DashboardPage() {
         <header className="space-y-2">
           <h1 className="text-2xl font-bold">Painel de Indicadores Financeiros</h1>
           <p className="text-sm text-gray-500">
-            Cliente: {clienteSelecionado || "Todos"}
+            Cliente: {filtros.cliente || "Todos"}
           </p>
           <div className="text-sm inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-md shadow-sm w-fit">
-            📅 Dados filtrados para: <strong>{nomePeriodo(periodoSelecionado)}</strong>
+            📅 Dados filtrados para: <strong>{nomePeriodo(filtros.periodo)}</strong>
           </div>
         </header>
 
@@ -60,8 +60,8 @@ export default function DashboardPage() {
             <label htmlFor="cliente-select" className="block mb-1 font-medium">Selecionar Cliente:</label>
             <select
               id="cliente-select"
-              value={clienteSelecionado}
-              onChange={e => setClienteSelecionado(e.target.value)}
+              value={filtros.cliente}
+              onChange={e => atualizarCampo("cliente", e.target.value)}
               className="w-full max-w-xs border border-gray-300 rounded-md p-2"
             >
               <option value="">Todos</option>
@@ -81,28 +81,26 @@ export default function DashboardPage() {
               onClick={() => setDropdownAberto(!dropdownAberto)}
             >
               <Calendar className="w-4 h-4 mr-2" />
-              {nomePeriodo(periodoSelecionado)}
+              {nomePeriodo(filtros.periodo)}
               <ChevronDown className="w-4 h-4 ml-auto" />
             </button>
 
             {dropdownAberto && (
               <div className="absolute mt-1 w-full max-w-xs rounded-md bg-white shadow-lg border border-gray-200 z-10">
                 <ul className="text-sm text-gray-700">
-                  <li>
-                    <button className="w-full px-4 py-2 text-left hover:bg-gray-100" onClick={() => { setPeriodoSelecionado("atual"); setDropdownAberto(false); }}>
-                      Mês Atual
-                    </button>
-                  </li>
-                  <li>
-                    <button className="w-full px-4 py-2 text-left hover:bg-gray-100" onClick={() => { setPeriodoSelecionado("anterior"); setDropdownAberto(false); }}>
-                      Último Mês
-                    </button>
-                  </li>
-                  <li>
-                    <button className="w-full px-4 py-2 text-left hover:bg-gray-100" onClick={() => { setPeriodoSelecionado("ultimos3"); setDropdownAberto(false); }}>
-                      Últimos 3 Meses
-                    </button>
-                  </li>
+                  {["atual", "anterior", "ultimos3"].map((p) => (
+                    <li key={p}>
+                      <button
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100"
+                        onClick={() => {
+                          atualizarCampo("periodo", p);
+                          setDropdownAberto(false);
+                        }}
+                      >
+                        {nomePeriodo(p)}
+                      </button>
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -111,22 +109,23 @@ export default function DashboardPage() {
 
         {/* KPIs */}
         <section>
-          <ClienteResumo cliente={clienteSelecionado} periodo={periodoSelecionado} />
+          <ClienteResumo />
         </section>
 
         {/* Gráficos principais */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ResumoFinanceiroGrafico cliente={clienteSelecionado} periodo={periodoSelecionado} />
-          <DonutChart cliente={clienteSelecionado} periodo={periodoSelecionado} />
+          <ResumoFinanceiroGrafico />
+          <DonutChart />
         </section>
 
         {/* Gráfico por categoria */}
         <section>
-          <GastosPorCategoriaChart cliente={clienteSelecionado} periodo={periodoSelecionado} />
+          <GastosPorCategoriaChart />
         </section>
+
         {/* Custos por Cliente */}
         <section>
-          <CustoOperacaoChart cliente={clienteSelecionado} periodo={periodoSelecionado} />
+          <CustoOperacaoChart />
         </section>
       </div>
     </div>

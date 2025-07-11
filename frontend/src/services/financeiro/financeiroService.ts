@@ -1,4 +1,4 @@
-import { ResumoFinanceiro } from "@/models/ResumoFinanceiro";
+import { ResumoFinanceiro } from "@/interfaces/ResumoFinanceiro";
 
 export interface CategoriaDespesa {
   categoria: string;

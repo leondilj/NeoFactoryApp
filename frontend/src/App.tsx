@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import DashboardPage from "./components/dashboard/DashboardPage";
-import { fakeAuth } from "./auth";
+import Login from "@/pages/login/index";
+import { fakeAuth } from "@/auth/auth";
+import DashboardFinanceiro from "@/pages/dashboard/index";
 
 export default function App() {
   return (
@@ -13,7 +13,7 @@ export default function App() {
           <Route
             path="/dashboard"
             element={
-              fakeAuth.isAuthenticated() ? <DashboardPage /> : <Navigate to="/" />
+              fakeAuth.isAuthenticated() ? <DashboardFinanceiro /> : <Navigate to="/" />
             }
           />
         </Routes>

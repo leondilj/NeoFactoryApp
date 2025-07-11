@@ -1,19 +1,8 @@
-import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { buscarResumoFinanceiro } from "@/services/financeiro";
-import { ResumoFinanceiro } from "@/models/ResumoFinanceiro";
+import { useFinanceiroStore } from "@/store/useFinanceiroStore";
 
-interface Props {
-  cliente: string;
-  periodo?: string;
-}
-
-export default function ResumoFinanceiroGrafico({ cliente, periodo = "atual" }: Props) {
-  const [dados, setDados] = useState<ResumoFinanceiro>({ receita: 0, despesa: 0, lucro: 0 });
-
-  useEffect(() => {
-    buscarResumoFinanceiro({ cliente, periodo }).then(setDados);
-  }, [cliente, periodo]);
+export default function ResumoFinanceiroGrafico() {
+  const { dados } = useFinanceiroStore();
 
   const data = [
     { nome: "Receita", valor: dados.receita },

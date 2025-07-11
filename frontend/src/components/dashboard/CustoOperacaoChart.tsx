@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from "recharts";
-import { buscarResumoFinanceiro, CustoPorCliente } from "@/services/financeiro";
+import { buscarResumoFinanceiro, CustoPorCliente } from "@/services/financeiro/financeiroService";
+import { useFinanceiroStore } from "@/store/useFinanceiroStore";
 
-interface Props {
-  cliente: string;
-  periodo?: string;
-}
-
-export default function CustoOperacaoChart({ cliente, periodo = "atual" }: Props) {
+export default function CustoOperacaoChart() {
+  const { filtros } = useFinanceiroStore();
   const [data, setData] = useState<CustoPorCliente[]>([]);
 
   useEffect(() => {
-    buscarResumoFinanceiro({ cliente, periodo }).then(res => {
+    buscarResumoFinanceiro(filtros).then(res => {
       setData(res.custoPorCliente || []);
     });
-  }, [cliente, periodo]);
+  }, [filtros]);
 
   return (
     <div className="bg-white p-4 md:p-6 rounded-xl shadow-md w-full">
