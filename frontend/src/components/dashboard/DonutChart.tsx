@@ -1,25 +1,12 @@
-import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import { buscarResumoFinanceiro } from "@/services/financeiro/financeiroService";
 import { useFinanceiroStore } from "@/store/useFinanceiroStore";
 
-const cores = ["#10b981", "#f59e0b"]; // verde (fixa), amarelo (variável)
+const cores = ["#10b981", "#f59e0b"]; // fixa / variável
 
 export default function DonutChart() {
-  const { filtros } = useFinanceiroStore();
-  const [fixa, setFixa] = useState(0);
-  const [variavel, setVariavel] = useState(0);
-
-  useEffect(() => {
-    buscarResumoFinanceiro({ ...filtros, tipoDespesa: "fixa" }).then((d) =>
-      setFixa(d.despesa)
-    );
-
-    buscarResumoFinanceiro({ ...filtros, tipoDespesa: "variavel" }).then((d) =>
-      setVariavel(d.despesa)
-    );
-  }, [filtros]);
-
+  const { filtros, dados } = useFinanceiroStore();
+  const fixa = dados.despesaFixa;
+  const variavel = dados.despesaVariavel;
   const total = fixa + variavel;
 
   const data = [
@@ -55,7 +42,6 @@ export default function DonutChart() {
               <Tooltip formatter={(value) => `R$ ${(value as number).toFixed(2)}`} />
             </PieChart>
           </ResponsiveContainer>
-          {/* Valor total no centro */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <span className="text-xl font-semibold text-gray-800">
               R$ {total.toFixed(2)}
@@ -63,7 +49,7 @@ export default function DonutChart() {
           </div>
         </div>
 
-        {/* Legenda customizada */}
+        {/* Legenda */}
         <div className="space-y-2 w-full max-w-sm">
           {data.map((item, index) => (
             <div key={index} className="flex items-center justify-between">
