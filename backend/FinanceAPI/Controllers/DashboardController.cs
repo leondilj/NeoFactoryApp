@@ -64,11 +64,15 @@ public class DashboardController : ControllerBase
                 Total = g.Sum(d => d.Valor)
             }).ToList();
 
+        var despesaFinal = !string.IsNullOrEmpty(tipoDespesa)
+            ? despesasParaGraficos.Sum(d => d.Valor) // ✅ apenas do tipo filtrado
+            : totalDespesa; // ✅ caso geral, todas as despesas    
+
         // 8. Retorno
         return Ok(new
         {
             Receita = totalReceita,
-            Despesa = totalDespesa,
+            Despesa = despesaFinal,
             Lucro = lucro,
             Categorias = categoriasResumo,
             CustoPorCliente = custoPorCliente

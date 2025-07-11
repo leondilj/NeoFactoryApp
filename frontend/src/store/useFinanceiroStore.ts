@@ -14,7 +14,9 @@ interface DadosFinanceiros {
   categorias: CategoriaDespesa[];
   despesaFixa: number;
   despesaVariavel: number;
+  despesaViagem: number; // ✅ novo
 }
+
 
 interface FinanceiroStore {
   filtros: FiltrosFinanceiros;
@@ -35,7 +37,8 @@ export const useFinanceiroStore = create<FinanceiroStore>((set, get) => ({
     custoPorCliente: [],
     categorias: [],
     despesaFixa: 0,
-    despesaVariavel: 0
+    despesaVariavel: 0,
+    despesaViagem: 0 // ✅ novo campo
   },
   atualizarCampo: (campo, valor) => {
     set((state) => ({
@@ -44,11 +47,12 @@ export const useFinanceiroStore = create<FinanceiroStore>((set, get) => ({
   },
   carregarResumo: async (filtros) => {
     try {
-      const [base, fixa, variavel] = await Promise.all([
-        buscarResumoFinanceiro(filtros),
-        buscarResumoFinanceiro({ ...filtros, tipoDespesa: "fixa" }),
-        buscarResumoFinanceiro({ ...filtros, tipoDespesa: "variavel" })
-      ]);
+        const [base, fixa, variavel, viagem] = await Promise.all([
+          buscarResumoFinanceiro(filtros),
+          buscarResumoFinanceiro({ ...filtros, tipoDespesa: "fixa" }),
+          buscarResumoFinanceiro({ ...filtros, tipoDespesa: "variavel" }),
+          buscarResumoFinanceiro({ ...filtros, tipoDespesa: "viagem" })
+        ]);
 
       set({
         dados: {
@@ -58,7 +62,8 @@ export const useFinanceiroStore = create<FinanceiroStore>((set, get) => ({
           custoPorCliente: base.custoPorCliente || [],
           categorias: base.categorias || [],
           despesaFixa: fixa.despesa || 0,
-          despesaVariavel: variavel.despesa || 0
+          despesaVariavel: variavel.despesa || 0,
+          despesaViagem: viagem.despesa || 0 // ✅ novo campo
         }
       });
     } catch (error) {

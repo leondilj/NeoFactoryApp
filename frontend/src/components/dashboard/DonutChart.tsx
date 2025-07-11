@@ -1,17 +1,19 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { useFinanceiroStore } from "@/store/useFinanceiroStore";
 
-const cores = ["#10b981", "#f59e0b"]; // fixa / variável
+const cores = ["#10b981", "#f59e0b", "#3b82f6"]; // Fixa / Variável / Viagem
 
 export default function DonutChart() {
   const { filtros, dados } = useFinanceiroStore();
   const fixa = dados.despesaFixa;
   const variavel = dados.despesaVariavel;
-  const total = fixa + variavel;
+  const viagem = dados.despesaViagem;
+  const total = fixa + variavel + viagem;
 
   const data = [
     { name: "Fixa", value: fixa },
     { name: "Variável", value: variavel },
+    { name: "Viagem", value: viagem }
   ];
 
   return (
